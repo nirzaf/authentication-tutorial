@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Methods: Interactive Learning Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .auth-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .auth-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-left-color: #667eea;
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        .code-block {
+            background: #2d3748;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        .token-part {
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .header-part { background: #ff6b6b; color: white; }
+        .payload-part { background: #4ecdc4; color: white; }
+        .signature-part { background: #45b7d1; color: white; }
+        .flow-step {
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideIn 0.6s ease forwards;
+        }
+        .flow-step:nth-child(2) { animation-delay: 0.2s; }
+        .flow-step:nth-child(3) { animation-delay: 0.4s; }
+        .flow-step:nth-child(4) { animation-delay: 0.6s; }
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            background-color: #e2e8f0;
+        }
+        .quiz-option.selected {
+            background-color: #667eea;
+            color: white;
+        }
+        .quiz-option.correct {
+            background-color: #48bb78;
+            color: white;
+        }
+        .quiz-option.incorrect {
+            background-color: #f56565;
+            color: white;
+        }
+        @media print {
+            body { font-size: 12px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Progress Bar -->
+    <div class="fixed top-0 left-0 w-full bg-white shadow-md z-50 no-print">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-bold text-gray-800">Authentication Methods</h1>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-600">Progress: <span id="progress-text">0%</span></span>
+                    <div class="w-32 bg-gray-200 rounded-full h-2">
+                        <div id="progress-bar" class="progress-bar bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pt-20">
+        <!-- Hero Section -->
+        <section id="intro" class="gradient-bg text-white py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                    <i class="fas fa-shield-alt mr-4"></i>
+                    Authentication Mastery
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90">
+                    From Fundamentals to Advanced Implementations
+                </p>
+                <div class="grid md:grid-cols-3 gap-6 mt-12">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-6">
+                        <i class="fas fa-key text-4xl mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">JWT Authentication</h3>
+                        <p class="opacity-90">Stateless, scalable token-based authentication</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-6">
+                        <i class="fas fa-cookie-bite text-4xl mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Session-Based</h3>
+                        <p class="opacity-90">Traditional server-side session management</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-6">
+                        <i class="fas fa-handshake text-4xl mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">OAuth 2.0</h3>
+                        <p class="opacity-90">Secure third-party authorization</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Authentication Basics -->
+        <section id="basics" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">Authentication Fundamentals</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="auth-card bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-question-circle text-blue-600 text-2xl mr-3"></i>
+                            <h3 class="text-xl font-semibold">What is Authentication?</h3>
+                        </div>
+                        <p class="text-gray-700 mb-4">
+                            Authentication is the process of verifying the identity of a user, device, or system. 
+                            It answers the question: "Who are you?"
+                        </p>
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-blue-800 font-medium">Key Components:</p>
+                            <ul class="list-disc list-inside text-blue-700 mt-2">
+                                <li>Identity verification</li>
+                                <li>Credential validation</li>
+                                <li>Access control</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="auth-card bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 text-2xl mr-3"></i>
+                            <h3 class="text-xl font-semibold">Why is it Necessary?</h3>
+                        </div>
+                        <p class="text-gray-700 mb-4">
+                            Authentication protects sensitive data and ensures only authorized users can access resources.
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-lock text-green-600 mr-2"></i>
+                                <span>Data Protection</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-user-shield text-green-600 mr-2"></i>
+                                <span>User Privacy</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-ban text-green-600 mr-2"></i>
+                                <span>Prevent Unauthorized Access</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="auth-card bg-red-50 rounded-lg shadow-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-red-800">
+                        <i class="fas fa-bug mr-2"></i>
+                        Common Security Challenges
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-red-700 mb-2">Credential Theft</h4>
+                            <p class="text-sm text-gray-600">Passwords stolen through phishing, breaches, or malware</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-red-700 mb-2">Session Hijacking</h4>
+                            <p class="text-sm text-gray-600">Attackers steal session tokens to impersonate users</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-red-700 mb-2">Weak Passwords</h4>
+                            <p class="text-sm text-gray-600">Easily guessable or commonly used passwords</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz 1 -->
+                <div class="bg-gray-100 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        Quick Quiz: Authentication Basics
+                    </h3>
+                    <div class="quiz-question mb-4">
+                        <p class="font-medium mb-3">What is the primary purpose of authentication?</p>
+                        <div class="space-y-2">
+                            <div class="quiz-option p-3 rounded border" data-quiz="1" data-option="a">
+                                A) To encrypt data transmission
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="1" data-option="b">
+                                B) To verify user identity
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="1" data-option="c">
+                                C) To compress files
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="1" data-option="d">
+                                D) To speed up websites
+                            </div>
+                        </div>
+                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="checkQuiz(1, 'b')">
+                            Check Answer
+                        </button>
+                        <div id="quiz-1-result" class="mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- JWT Authentication -->
+        <section id="jwt" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">
+                    <i class="fas fa-key mr-2"></i>
+                    JWT Authentication
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4">JWT Structure</h3>
+                        <p class="text-gray-700 mb-4">
+                            JSON Web Tokens consist of three parts separated by dots:
+                        </p>
+                        <div class="code-block text-white text-sm mb-4">
+                            <div class="mb-2">
+                                <span class="token-part header-part">Header</span><span class="text-gray-400">.</span><span class="token-part payload-part">Payload</span><span class="text-gray-400">.</span><span class="token-part signature-part">Signature</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-start">
+                                <div class="token-part header-part text-xs mr-2">Header</div>
+                                <div class="text-sm">
+                                    <p class="font-medium">Algorithm & Token Type</p>
+                                    <p class="text-gray-600">Specifies the signing algorithm</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="token-part payload-part text-xs mr-2">Payload</div>
+                                <div class="text-sm">
+                                    <p class="font-medium">Claims & Data</p>
+                                    <p class="text-gray-600">Contains user information and metadata</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="token-part signature-part text-xs mr-2">Signature</div>
+                                <div class="text-sm">
+                                    <p class="font-medium">Verification</p>
+                                    <p class="text-gray-600">Ensures token hasn't been tampered with</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4">JWT Flow Process</h3>
+                        <div class="space-y-4">
+                            <div class="flow-step flex items-center">
+                                <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">1</div>
+                                <div>
+                                    <p class="font-medium">User Login</p>
+                                    <p class="text-gray-600 text-sm">User provides credentials</p>
+                                </div>
+                            </div>
+                            <div class="flow-step flex items-center">
+                                <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">2</div>
+                                <div>
+                                    <p class="font-medium">Server Verification</p>
+                                    <p class="text-gray-600 text-sm">Credentials are validated</p>
+                                </div>
+                            </div>
+                            <div class="flow-step flex items-center">
+                                <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">3</div>
+                                <div>
+                                    <p class="font-medium">JWT Generation</p>
+                                    <p class="text-gray-600 text-sm">Server creates and signs token</p>
+                                </div>
+                            </div>
+                            <div class="flow-step flex items-center">
+                                <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">4</div>
+                                <div>
+                                    <p class="font-medium">Token Usage</p>
+                                    <p class="text-gray-600 text-sm">Client includes token in requests</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Example -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-code mr-2"></i>
+                        Implementation Example (Node.js)
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold mb-2">Token Generation</h4>
+                            <div class="code-block text-white text-sm">
+<pre><code>const jwt = require('jsonwebtoken');
+
+// Generate JWT
+const generateToken = (user) => {
+  return jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+};
+
+// Usage
+const token = generateToken(user);
+res.json({ token });</code></pre>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-2">Token Verification</h4>
+                            <div class="code-block text-white text-sm">
+<pre><code>const verifyToken = (req, res, next) => {
+  const token = req.header('Authorization')
+    ?.replace('Bearer ', '');
+  
+  if (!token) {
+    return res.status(401)
+      .json({ error: 'Access denied' });
+  }
+
+  try {
+    const decoded = jwt.verify(
+      token, 
+      process.env.JWT_SECRET
+    );
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(400)
+      .json({ error: 'Invalid token' });
+  }
+};</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JWT Best Practices -->
+                <div class="bg-green-50 rounded-lg shadow-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-green-800">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Security Best Practices
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-green-700 mb-3">✅ Do's</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                    <span>Use strong, unique secrets</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                    <span>Set appropriate expiration times</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                    <span>Use HTTPS for token transmission</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                    <span>Implement token rotation</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-red-700 mb-3">❌ Don'ts</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-start">
+                                    <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                    <span>Store sensitive data in payload</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                    <span>Use weak signing algorithms</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                    <span>Set long expiration times</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                    <span>Trust tokens without verification</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz 2 -->
+                <div class="bg-gray-100 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        Quiz: JWT Authentication
+                    </h3>
+                    <div class="quiz-question mb-4">
+                        <p class="font-medium mb-3">Which part of a JWT contains the user information?</p>
+                        <div class="space-y-2">
+                            <div class="quiz-option p-3 rounded border" data-quiz="2" data-option="a">
+                                A) Header
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="2" data-option="b">
+                                B) Payload
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="2" data-option="c">
+                                C) Signature
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="2" data-option="d">
+                                D) All parts
+                            </div>
+                        </div>
+                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="checkQuiz(2, 'b')">
+                            Check Answer
+                        </button>
+                        <div id="quiz-2-result" class="mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Session-Based Authentication -->
+        <section id="sessions" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">
+                    <i class="fas fa-cookie-bite mr-2"></i>
+                    Session-Based Authentication
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white rounded-lg shadow-lg p-6 border">
+                        <h3 class="text-xl font-semibold mb-4">How Sessions Work</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">1</div>
+                                <div>
+                                    <p class="font-medium">User Login</p>
+                                    <p class="text-gray-600 text-sm">User submits credentials</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">2</div>
+                                <div>
+                                    <p class="font-medium">Session Creation</p>
+                                    <p class="text-gray-600 text-sm">Server creates session and stores data</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">3</div>
+                                <div>
+                                    <p class="font-medium">Cookie Sent</p>
+                                    <p class="text-gray-600 text-sm">Session ID sent as cookie to client</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">4</div>
+                                <div>
+                                    <p class="font-medium">Request Validation</p>
+                                    <p class="text-gray-600 text-sm">Server validates session on each request</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-6 border">
+                        <h3 class="text-xl font-semibold mb-4">Session Storage Options</h3>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-blue-800 mb-2">
+                                    <i class="fas fa-server mr-2"></i>
+                                    Server-Side Sessions
+                                </h4>
+                                <p class="text-blue-700 text-sm mb-2">Session data stored on server</p>
+                                <div class="text-xs text-blue-600">
+                                    <span class="bg-blue-200 px-2 py-1 rounded mr-2">Secure</span>
+                                    <span class="bg-blue-200 px-2 py-1 rounded mr-2">Less bandwidth</span>
+                                    <span class="bg-blue-200 px-2 py-1 rounded">Server memory usage</span>
+                                </div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-green-800 mb-2">
+                                    <i class="fas fa-desktop mr-2"></i>
+                                    Client-Side Sessions
+                                </h4>
+                                <p class="text-green-700 text-sm mb-2">Session data stored in cookies/localStorage</p>
+                                <div class="text-xs text-green-600">
+                                    <span class="bg-green-200 px-2 py-1 rounded mr-2">Scalable</span>
+                                    <span class="bg-green-200 px-2 py-1 rounded mr-2">No server storage</span>
+                                    <span class="bg-green-200 px-2 py-1 rounded">More bandwidth</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Implementation Example -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8 border">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-code mr-2"></i>
+                        Implementation Example (Express.js)
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold mb-2">Session Setup</h4>
+                            <div class="code-block text-white text-sm">
+<pre><code>const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI
+  }),
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 // 24 hours
+  }
+}));</code></pre>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-2">Session Usage</h4>
+                            <div class="code-block text-white text-sm">
+<pre><code>// Login route
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  
+  if (user && await bcrypt.compare(password, user.password)) {
+    req.session.userId = user._id;
+    req.session.user = {
+      id: user._id,
+      email: user.email,
+      role: user.role
+    };
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cookie Security -->
+                <div class="bg-yellow-50 rounded-lg shadow-lg p-6 mb-8 border border-yellow-200">
+                    <h3 class="text-xl font-semibold mb-4 text-yellow-800">
+                        <i class="fas fa-cookie mr-2"></i>
+                        Cookie Security Considerations
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-700 mb-2">HttpOnly</h4>
+                            <p class="text-sm text-gray-600">Prevents JavaScript access to cookies, reducing XSS risks</p>
+                            <div class="code-block text-white text-xs mt-2">
+                                <code>httpOnly: true</code>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-700 mb-2">Secure</h4>
+                            <p class="text-sm text-gray-600">Ensures cookies are only sent over HTTPS connections</p>
+                            <div class="code-block text-white text-xs mt-2">
+                                <code>secure: true</code>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-700 mb-2">SameSite</h4>
+                            <p class="text-sm text-gray-600">Protects against CSRF attacks by controlling cookie sending</p>
+                            <div class="code-block text-white text-xs mt-2">
+                                <code>sameSite: 'strict'</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scalability Considerations -->
+                <div class="bg-gray-50 rounded-lg shadow-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-expand-arrows-alt mr-2"></i>
+                        Scalability Considerations
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-green-700 mb-3">Advantages</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-center">
+                                    <i class="fas fa-plus text-green-600 mr-2"></i>
+                                    <span>Immediate session invalidation</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-plus text-green-600 mr-2"></i>
+                                    <span>Server-side security control</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-plus text-green-600 mr-2"></i>
+                                    <span>Better for sensitive applications</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-red-700 mb-3">Challenges</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-center">
+                                    <i class="fas fa-minus text-red-600 mr-2"></i>
+                                    <span>Server memory/storage requirements</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-minus text-red-600 mr-2"></i>
+                                    <span>Load balancing complexity</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-minus text-red-600 mr-2"></i>
+                                    <span>Session store synchronization</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz 3 -->
+                <div class="bg-gray-100 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        Quiz: Session-Based Authentication
+                    </h3>
+                    <div class="quiz-question mb-4">
+                        <p class="font-medium mb-3">What is the main advantage of server-side session storage?</p>
+                        <div class="space-y-2">
+                            <div class="quiz-option p-3 rounded border" data-quiz="3" data-option="a">
+                                A) Faster performance
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="3" data-option="b">
+                                B) Better security control
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="3" data-option="c">
+                                C) Less server resources
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="3" data-option="d">
+                                D) Mobile compatibility
+                            </div>
+                        </div>
+                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="checkQuiz(3, 'b')">
+                            Check Answer
+                        </button>
+                        <div id="quiz-3-result" class="mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- OAuth 2.0 -->
+        <section id="oauth" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">
+                    <i class="fas fa-handshake mr-2"></i>
+                    OAuth 2.0 Authentication
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4">OAuth 2.0 Flow Types</h3>
+                        <div class="space-y-4">
+                            <div class="border-l-4 border-blue-500 pl-4">
+                                <h4 class="font-semibold text-blue-700">Authorization Code</h4>
+                                <p class="text-sm text-gray-600">Most secure flow for web applications with backend</p>
+                            </div>
+                            <div class="border-l-4 border-green-500 pl-4">
+                                <h4 class="font-semibold text-green-700">Implicit Flow</h4>
+                                <p class="text-sm text-gray-600">For single-page applications (SPAs)</p>
+                            </div>
+                            <div class="border-l-4 border-purple-500 pl-4">
+                                <h4 class="font-semibold text-purple-700">Client Credentials</h4>
+                                <p class="text-sm text-gray-600">For machine-to-machine authentication</p>
+                            </div>
+                            <div class="border-l-4 border-orange-500 pl-4">
+                                <h4 class="font-semibold text-orange-700">Password Grant</h4>
+                                <p class="text-sm text-gray-600">For trusted first-party applications</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4">Authorization vs Authentication</h3>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-blue-800 mb-2">
+                                    <i class="fas fa-key mr-2"></i>
+                                    Authentication
+                                </h4>
+                                <p class="text-blue-700 text-sm">Verifies who you are</p>
+                                <p class="text-blue-600 text-xs mt-1">"Prove your identity"</p>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-green-800 mb-2">
+                                    <i class="fas fa-unlock mr-2"></i>
+                                    Authorization
+                                </h4>
+                                <p class="text-green-700 text-sm">Determines what you can access</p>
+                                <p class="text-green-600 text-xs mt-1">"What are you allowed to do?"</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 bg-yellow-50 rounded-lg">
+                            <p class="text-yellow-800 text-sm font-medium">
+                                <i class="fas fa-lightbulb mr-2"></i>
+                                OAuth 2.0 is primarily an authorization framework, but often used for authentication via OpenID Connect
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OAuth Flow Diagram -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-flow-chart mr-2"></i>
+                        Authorization Code Flow (Step by Step)
+                    </h3>
+                    <div class="grid md:grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">1</div>
+                            <h4 class="font-semibold mb-2">Authorization Request</h4>
+                            <p class="text-sm text-gray-600">User clicks "Login with Provider"</p>
+                            <div class="mt-2 text-xs bg-blue-50 p-2 rounded">
+                                Redirect to authorization server
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">2</div>
+                            <h4 class="font-semibold mb-2">User Consent</h4>
+                            <p class="text-sm text-gray-600">User grants permissions</p>
+                            <div class="mt-2 text-xs bg-green-50 p-2 rounded">
+                                Authorization code generated
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-purple-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">3</div>
+                            <h4 class="font-semibold mb-2">Code Exchange</h4>
+                            <p class="text-sm text-gray-600">Server exchanges code for token</p>
+                            <div class="mt-2 text-xs bg-purple-50 p-2 rounded">
+                                Access token received
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-orange-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">4</div>
+                            <h4 class="font-semibold mb-2">API Access</h4>
+                            <p class="text-sm text-gray-600">Use token to access resources</p>
+                            <div class="mt-2 text-xs bg-orange-50 p-2 rounded">
+                                Authenticated requests
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Example -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-code mr-2"></i>
+                        OAuth Implementation Example
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold mb-2">OAuth Configuration</h4>
+                            <div class="code-block text-white text-sm">
+<pre><code>const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "/auth/google/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+  // Find or create user in database
+  let user = await User.findOne({ googleId: profile.id });
+  
+  if (!user) {
+    user = await User.create({
+      googleId: profile.id,
+      name: profile.displayName,
+      email: profile.emails[0].value
+    });
+  }
+  
+  return done(null, user);
+}));</code></pre>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-2">OAuth Routes</h4>
+                            <div class="code-block text-white text-sm">
+<pre><code>// Initiate OAuth flow
+app.get('/auth/google', 
+  passport.authenticate('google', { 
+    scope: ['profile', 'email'] 
+  })
+);
+
+// Handle OAuth callback
+app.get('/auth/google/callback',
+  passport.authenticate('google', { 
+    failureRedirect: '/login' 
+  }),
+  (req, res) => {
+    // Successful authentication
+    res.redirect('/dashboard');
+  }
+);
+
+// Logout
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popular OAuth Providers -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-globe mr-2"></i>
+                        Popular OAuth Providers
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="text-center p-4 border rounded-lg hover:shadow-md transition-shadow">
+                            <i class="fab fa-google text-4xl text-red-500 mb-3"></i>
+                            <h4 class="font-semibold">Google</h4>
+                            <p class="text-sm text-gray-600">Gmail, Drive, Calendar</p>
+                            <div class="mt-2 text-xs bg-gray-100 p-2 rounded">
+                                https://accounts.google.com
+                            </div>
+                        </div>
+                        <div class="text-center p-4 border rounded-lg hover:shadow-md transition-shadow">
+                            <i class="fab fa-github text-4xl text-gray-800 mb-3"></i>
+                            <h4 class="font-semibold">GitHub</h4>
+                            <p class="text-sm text-gray-600">Code repositories, Gists</p>
+                            <div class="mt-2 text-xs bg-gray-100 p-2 rounded">
+                                https://github.com/login
+                            </div>
+                        </div>
+                        <div class="text-center p-4 border rounded-lg hover:shadow-md transition-shadow">
+                            <i class="fab fa-facebook text-4xl text-blue-600 mb-3"></i>
+                            <h4 class="font-semibold">Facebook</h4>
+                            <p class="text-sm text-gray-600">Social graph, Posts</p>
+                            <div class="mt-2 text-xs bg-gray-100 p-2 rounded">
+                                https://www.facebook.com/v18.0/dialog/oauth
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Best Practices -->
+                <div class="bg-red-50 rounded-lg shadow-lg p-6 mb-8 border border-red-200">
+                    <h3 class="text-xl font-semibold mb-4 text-red-800">
+                        <i class="fas fa-shield-alt mr-2"></i>
+                        OAuth Security Best Practices
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-red-700 mb-3">Essential Practices</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                                    <span>Use PKCE for public clients</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                                    <span>Validate redirect URIs strictly</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                                    <span>Use state parameter to prevent CSRF</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                                    <span>Implement proper scope validation</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-red-700 mb-3">Common Vulnerabilities</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-start">
+                                    <i class="fas fa-exclamation-triangle text-red-600 mr-2 mt-1"></i>
+                                    <span>Open redirects</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-exclamation-triangle text-red-600 mr-2 mt-1"></i>
+                                    <span>Authorization code interception</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-exclamation-triangle text-red-600 mr-2 mt-1"></i>
+                                    <span>CSRF attacks on redirect</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-exclamation-triangle text-red-600 mr-2 mt-1"></i>
+                                    <span>Token leakage via URL</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz 4 -->
+                <div class="bg-gray-100 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        Quiz: OAuth 2.0
+                    </h3>
+                    <div class="quiz-question mb-4">
+                        <p class="font-medium mb-3">What is the most secure OAuth 2.0 flow for web applications with a backend?</p>
+                        <div class="space-y-2">
+                            <div class="quiz-option p-3 rounded border" data-quiz="4" data-option="a">
+                                A) Implicit Flow
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="4" data-option="b">
+                                B) Authorization Code Flow
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="4" data-option="c">
+                                C) Password Grant
+                            </div>
+                            <div class="quiz-option p-3 rounded border" data-quiz="4" data-option="d">
+                                D) Client Credentials
+                            </div>
+                        </div>
+                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="checkQuiz(4, 'b')">
+                            Check Answer
+                        </button>
+                        <div id="quiz-4-result" class="mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Chart -->
+        <section id="comparison" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">
+                    <i class="fas fa-balance-scale mr-2"></i>
+                    Authentication Methods Comparison
+                </h2>
+
+                <div class="overflow-x-auto mb-8">
+                    <table class="w-full bg-white rounded-lg shadow-lg overflow-hidden">
+                        <thead class="bg-gray-800 text-white">
+                            <tr>
+                                <th class="px-6 py-4 text-left">Feature</th>
+                                <th class="px-6 py-4 text-center">JWT</th>
+                                <th class="px-6 py-4 text-center">Session-Based</th>
+                                <th class="px-6 py-4 text-center">OAuth 2.0</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Stateless</td>
+                                <td class="px-6 py-4 text-center">
+                                    <i class="fas fa-check text-green-600"></i>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <i class="fas fa-times text-red-600"></i>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <i class="fas fa-check text-green-600"></i>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Scalability</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">High</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Medium</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">High</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Security</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">Good</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">Excellent</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Variable</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Implementation Complexity</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Medium</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">Low</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">High</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Third-party Integration</td>
+                                <td class="px-6 py-4 text-center">
+                                    <i class="fas fa-times text-red-600"></i>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <i class="fas fa-times text-red-600"></i>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <i class="fas fa-check text-green-600"></i>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Mobile-Friendly</td>
+                                <td class="px-6 py-4 text-center">
+                                    <i class="fas fa-check text-green-600"></i>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <i class="fas fa-minus text-yellow-600"></i>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <i class="fas fa-check text-green-600"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Use Case Recommendations -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-blue-50 rounded-lg shadow-lg p-6 border border-blue-200">
+                        <h3 class="text-xl font-semibold mb-4 text-blue-800">
+                            <i class="fas fa-key mr-2"></i>
+                            Use JWT When:
+                        </h3>
+                        <ul class="space-y-2 text-sm text-blue-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>Building APIs or microservices</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>Need stateless authentication</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>Cross-domain authentication required</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>Mobile app authentication</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 rounded-lg shadow-lg p-6 border border-green-200">
+                        <h3 class="text-xl font-semibold mb-4 text-green-800">
+                            <i class="fas fa-cookie-bite mr-2"></i>
+                            Use Sessions When:
+                        </h3>
+                        <ul class="space-y-2 text-sm text-green-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>Traditional web applications</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>Need immediate session invalidation</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>High security requirements</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>Server-side rendering</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-purple-50 rounded-lg shadow-lg p-6 border border-purple-200">
+                        <h3 class="text-xl font-semibold mb-4 text-purple-800">
+                            <i class="fas fa-handshake mr-2"></i>
+                            Use OAuth When:
+                        </h3>
+                        <ul class="space-y-2 text-sm text-purple-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>Third-party integrations needed</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>Social login requirements</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>API access delegation</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right mr-2 mt-1"></i>
+                                <span>B2B application integrations</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources and Cheat Sheets -->
+        <section id="resources" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">
+                    <i class="fas fa-download mr-2"></i>
+                    Resources & Cheat Sheets
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <!-- JWT Cheat Sheet -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-blue-800">
+                            <i class="fas fa-key mr-2"></i>
+                            JWT Quick Reference
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-blue-700 mb-2">Common Claims</h4>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div><code class="bg-blue-200 px-1 rounded">iss</code> - Issuer</div>
+                                    <div><code class="bg-blue-200 px-1 rounded">sub</code> - Subject</div>
+                                    <div><code class="bg-blue-200 px-1 rounded">aud</code> - Audience</div>
+                                    <div><code class="bg-blue-200 px-1 rounded">exp</code> - Expiration</div>
+                                    <div><code class="bg-blue-200 px-1 rounded">iat</code> - Issued At</div>
+                                    <div><code class="bg-blue-200 px-1 rounded">jti</code> - JWT ID</div>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-blue-700 mb-2">Algorithms</h4>
+                                <div class="text-sm space-y-1">
+                                    <div><code class="bg-blue-200 px-1 rounded">HS256</code> - HMAC SHA-256</div>
+                                    <div><code class="bg-blue-200 px-1 rounded">RS256</code> - RSA SHA-256</div>
+                                    <div><code class="bg-blue-200 px-1 rounded">ES256</code> - ECDSA SHA-256</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Session Cheat Sheet -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-green-800">
+                            <i class="fas fa-cookie-bite mr-2"></i>
+                            Session Configuration
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-green-700 mb-2">Cookie Settings</h4>
+                                <div class="text-sm space-y-1">
+                                    <div><code class="bg-green-200 px-1 rounded">httpOnly: true</code></div>
+                                    <div><code class="bg-green-200 px-1 rounded">secure: true</code></div>
+                                    <div><code class="bg-green-200 px-1 rounded">sameSite: 'strict'</code></div>
+                                    <div><code class="bg-green-200 px-1 rounded">maxAge: 86400000</code></div>
+                                </div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-green-700 mb-2">Session Store Options</h4>
+                                <div class="text-sm space-y-1">
+                                    <div>• Memory (development only)</div>
+                                    <div>• Redis (recommended)</div>
+                                    <div>• MongoDB</div>
+                                    <div>• PostgreSQL</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OAuth Cheat Sheet -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-purple-800">
+                        <i class="fas fa-handshake mr-2"></i>
+                        OAuth 2.0 Quick Reference
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-purple-700 mb-2">Grant Types</h4>
+                            <div class="text-sm space-y-1">
+                                <div><strong>authorization_code</strong> - Web apps</div>
+                                <div><strong>implicit</strong> - SPAs (deprecated)</div>
+                                <div><strong>password</strong> - Trusted apps</div>
+                                <div><strong>client_credentials</strong> - M2M</div>
+                            </div>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-purple-700 mb-2">Common Scopes</h4>
+                            <div class="text-sm space-y-1">
+                                <div><code class="bg-purple-200 px-1 rounded">openid</code> - OIDC</div>
+                                <div><code class="bg-purple-200 px-1 rounded">profile</code> - User info</div>
+                                <div><code class="bg-purple-200 px-1 rounded">email</code> - Email access</div>
+                                <div><code class="bg-purple-200 px-1 rounded">offline_access</code> - Refresh token</div>
+                            </div>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-purple-700 mb-2">Response Types</h4>
+                            <div class="text-sm space-y-1">
+                                <div><code class="bg-purple-200 px-1 rounded">code</code> - Authorization code</div>
+                                <div><code class="bg-purple-200 px-1 rounded">token</code> - Access token</div>
+                                <div><code class="bg-purple-200 px-1 rounded">id_token</code> - ID token</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Downloadable Resources -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-file-download mr-2"></i>
+                        Downloadable Resources
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-3">
+                            <h4 class="font-semibold">Code Examples</h4>
+                            <button class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors" onclick="downloadResource('jwt-examples')">
+                                <i class="fas fa-download mr-2"></i>
+                                JWT Implementation Examples
+                            </button>
+                            <button class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors" onclick="downloadResource('session-examples')">
+                                <i class="fas fa-download mr-2"></i>
+                                Session Auth Examples
+                            </button>
+                            <button class="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition-colors" onclick="downloadResource('oauth-examples')">
+                                <i class="fas fa-download mr-2"></i>
+                                OAuth Integration Examples
+                            </button>
+                        </div>
+                        <div class="space-y-3">
+                            <h4 class="font-semibold">Reference Sheets</h4>
+                            <button class="w-full bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition-colors" onclick="downloadResource('security-checklist')">
+                                <i class="fas fa-download mr-2"></i>
+                                Security Checklist
+                            </button>
+                            <button class="w-full bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700 transition-colors" onclick="downloadResource('troubleshooting')">
+                                <i class="fas fa-download mr-2"></i>
+                                Troubleshooting Guide
+                            </button>
+                            <button class="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition-colors" onclick="downloadResource('comparison-chart')">
+                                <i class="fas fa-download mr-2"></i>
+                                Methods Comparison Chart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-8">
+            <div class="container mx-auto px-4 text-center">
+                <h3 class="text-2xl font-bold mb-4">
+                    <i class="fas fa-graduation-cap mr-2"></i>
+                    Congratulations!
+                </h3>
+                <p class="text-gray-300 mb-4">
+                    You've completed the Authentication Methods learning journey. You now understand the fundamentals 
+                    and advanced implementations of JWT, Session-Based, and OAuth authentication.
+                </p>
+                <div class="flex justify-center space-x-4 text-sm">
+                    <span class="bg-blue-600 px-3 py-1 rounded">JWT Mastery</span>
+                    <span class="bg-green-600 px-3 py-1 rounded">Session Expert</span>
+                    <span class="bg-purple-600 px-3 py-1 rounded">OAuth Specialist</span>
+                </div>
+                <p class="text-gray-400 mt-6 text-sm">
+                    Continue your learning journey by implementing these authentication methods in your projects!
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Progress tracking
+        let currentSection = 0;
+        const sections = ['intro', 'basics', 'jwt', 'sessions', 'oauth', 'comparison', 'resources'];
+        
+        function updateProgress() {
+            const progress = Math.round(((currentSection + 1) / sections.length) * 100);
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = progress + '%';
+        }
+
+        // Intersection Observer for progress tracking
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionId = entry.target.id;
+                    const sectionIndex = sections.indexOf(sectionId);
+                    if (sectionIndex !== -1 && sectionIndex > currentSection) {
+                        currentSection = sectionIndex;
+                        updateProgress();
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // Observe all sections
+        sections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) observer.observe(section);
+        });
+
+        // Quiz functionality
+        function checkQuiz(quizNumber, correctAnswer) {
+            const selectedOption = document.querySelector(`[data-quiz="${quizNumber}"].selected`);
+            const resultDiv = document.getElementById(`quiz-${quizNumber}-result`);
+            const options = document.querySelectorAll(`[data-quiz="${quizNumber}"]`);
+            
+            if (!selectedOption) {
+                resultDiv.className = 'mt-2 p-3 bg-yellow-100 text-yellow-800 rounded';
+                resultDiv.textContent = 'Please select an answer first!';
+                resultDiv.classList.remove('hidden');
+                return;
+            }
+
+            options.forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.option === correctAnswer) {
+                    option.classList.add('correct');
+                } else if (option === selectedOption && option.dataset.option !== correctAnswer) {
+                    option.classList.add('incorrect');
+                }
+            });
+
+            if (selectedOption.dataset.option === correctAnswer) {
+                resultDiv.className = 'mt-2 p-3 bg-green-100 text-green-800 rounded';
+                resultDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Correct! Well done!';
+            } else {
+                resultDiv.className = 'mt-2 p-3 bg-red-100 text-red-800 rounded';
+                resultDiv.innerHTML = '<i class="fas fa-times-circle mr-2"></i>Incorrect. The correct answer is highlighted in green.';
+            }
+            resultDiv.classList.remove('hidden');
+        }
+
+        // Quiz option selection
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('quiz-option')) {
+                const quizNumber = e.target.dataset.quiz;
+                const options = document.querySelectorAll(`[data-quiz="${quizNumber}"]`);
+                
+                options.forEach(option => {
+                    option.classList.remove('selected', 'correct', 'incorrect');
+                });
+                
+                e.target.classList.add('selected');
+            }
+        });
+
+        // Download functionality
+        function downloadResource(resourceType) {
+            const resources = {
+                'jwt-examples': {
+                    name: 'JWT_Implementation_Examples.zip',
+                    content: 'JWT authentication examples for various frameworks...'
+                },
+                'session-examples': {
+                    name: 'Session_Auth_Examples.zip',
+                    content: 'Session-based authentication examples...'
+                },
+                'oauth-examples': {
+                    name: 'OAuth_Integration_Examples.zip',
+                    content: 'OAuth 2.0 integration examples...'
+                },
+                'security-checklist': {
+                    name: 'Authentication_Security_Checklist.pdf',
+                    content: 'Comprehensive security checklist for authentication...'
+                },
+                'troubleshooting': {
+                    name: 'Authentication_Troubleshooting_Guide.pdf',
+                    content: 'Common authentication issues and solutions...'
+                },
+                'comparison-chart': {
+                    name: 'Authentication_Methods_Comparison.pdf',
+                    content: 'Detailed comparison of authentication methods...'
+                }
+            };
+
+            const resource = resources[resourceType];
+            if (resource) {
+                // Create a blob with the content
+                const blob = new Blob([resource.content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                // Create download link
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = resource.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Show success message
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check mr-2"></i>Downloaded!';
+                button.disabled = true;
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            }
+        }
+
+        // Initialize progress
+        updateProgress();
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add some interactivity to the JWT token visualization
+        document.addEventListener('DOMContentLoaded', function() {
+            const tokenParts = document.querySelectorAll('.token-part');
+            tokenParts.forEach(part => {
+                part.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                part.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
